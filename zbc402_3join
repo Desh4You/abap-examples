@@ -1,0 +1,111 @@
+*&---------------------------------------------------------------------*
+*& Report  ZBC402_3JOIN
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT  zbc402_3join.
+
+TYPES: BEGIN OF gty_s_booking,
+         carrid     TYPE sbook-carrid,
+         connid     TYPE sbook-connid,
+         fldate     TYPE sbook-fldate,
+         bookid     TYPE sbook-bookid,
+         customid   TYPE sbook-customid,
+         agencynum  TYPE sbook-agencynum,
+         carrname   TYPE scarr-carrname,
+         agencyname TYPE stravelag-name,
+         agencycity TYPE stravelag-city,
+
+      END OF gty_s_booking.
+
+TYPES:
+   gty_t_bookings TYPE STANDARD TABLE OF gty_s_booking
+                       WITH NON-UNIQUE KEY
+                       carrid connid fldate bookid.
+
+DATA:
+  gt_bookings TYPE gty_t_bookings,
+  gs_booking  TYPE gty_s_booking.
+
+DATA:
+  gv_custname   TYPE scustom-name.
+***  gv_carrname   TYPE scarr-carrname,
+***  gv_agencyname TYPE stravelag-name,
+***  gv_agencycity TYPE stravelag-city.
+
+FIELD-SYMBOLS:
+  <fs_booking> LIKE LINE OF gt_bookings.
+
+SELECT-OPTIONS :
+      so_agy FOR gs_booking-agencynum DEFAULT '100',
+      so_cus FOR gs_booking-customid,
+      so_fld FOR gs_booking-fldate.
+
+START-OF-SELECTION.
+
+  SELECT
+        b~carrid
+        b~connid
+        b~fldate
+        b~bookid
+        b~customid
+        b~agencynum
+        c~carrname
+        a~name
+        a~city
+   FROM sbook AS b
+    INNER JOIN scarr AS c
+      ON b~carrid = c~carrid
+    LEFT OUTER JOIN stravelag AS a
+      ON b~agencynum = a~agencynum
+    INTO TABLE gt_bookings
+   WHERE b~agencynum IN so_agy AND
+         b~fldate    IN so_cus AND
+         b~cancelled   <> 'X'.
+
+*******  SELECT carrid connid fldate bookid
+*******         customid agencynum
+*******         FROM sbook
+*******         INTO TABLE gt_bookings
+*******         WHERE agencynum IN so_agy AND
+*******               customid  IN so_cus AND
+*******               fldate    IN so_fld AND
+*******               cancelled <> 'X'.
+
+  LOOP AT gt_bookings ASSIGNING <fs_booking>.
+
+    SELECT SINGLE name FROM scustom INTO gv_custname
+           WHERE id = <fs_booking>-customid.
+*********
+*********    SELECT SINGLE carrname FROM scarr
+*********           INTO gv_carrname
+*********           WHERE carrid = <fs_booking>-carrid.
+*********
+*********    SELECT SINGLE name city FROM stravelag
+*********           INTO (gv_agencyname, gv_agencycity)
+*********           WHERE agencynum = <fs_booking>-agencynum.
+
+**    IF sy-subrc <> 0.
+**      CLEAR:
+**         gv_agencyname,
+**         gv_agencycity.
+**    ENDIF.
+
+    WRITE: /
+        <fs_booking>-carrid,
+        <fs_booking>-carrname,
+        "gv_carrname,
+        <fs_booking>-connid,
+        <fs_booking>-fldate,
+        <fs_booking>-bookid,
+        <fs_booking>-agencyname,
+        <fs_booking>-agencycity,
+        <fs_booking>-customid,
+        gv_custname.
+        "gv_agencyname,
+        "gv_agencycity.
+
+  ENDLOOP.

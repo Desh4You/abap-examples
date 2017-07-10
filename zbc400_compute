@@ -1,0 +1,58 @@
+*&---------------------------------------------------------------------*
+*& Report   ZBC400_COMPUTE
+*& autor:   Alex Vinicius Zamboli
+*& data:    2017-07-04
+*& email:   alex.zamboli@gmail.com
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT  ZBC400_COMPUTE.
+
+PARAMETER:  pa_int1   TYPE i,
+            pa_int2   TYPE i,
+            pa_op     TYPE c LENGTH 1.
+TYPES:      INT32     TYPE p LENGTH 3 DECIMALS 2.
+
+CONSTANTS:  gc_pi     TYPE p DECIMALS 5 VALUE '3.1416'.
+
+DATA:       gv_result TYPE p LENGTH 16 DECIMALS 2.
+DATA:       gv_int32  TYPE INT32,
+            gv_carrid TYPE S_CARRID.
+
+IF ( pa_op = '+' OR
+  pa_op = '-' OR
+  pa_op = '*' OR
+  pa_op = '/' AND pa_int2 <> 0 ).
+
+  CASE pa_op.
+    WHEN '+'.
+      gv_result = pa_int1 + pa_int2.
+    WHEN '-'.
+      gv_result = pa_int1 - pa_int2.
+    WHEN '*'.
+      gv_result = pa_int1 * pa_int2.
+    WHEN '/'.
+      gv_result = pa_int1 / pa_int2.
+    WHEN OTHERS.
+      WRITE: 'No idea how you enter here'.
+  ENDCASE.
+
+  BREAK-POINT.
+
+  WRITE: 'User: ', SY-UNAME.
+  NEW-LINE: .
+  WRITE: ', Date: ', SY-DATUM.
+  NEW-LINE: .
+  WRITE: ',', text-001, gv_result.
+
+ELSEIF pa_op = '/' AND pa_int2 = 0.
+
+  WRITE: text-002.
+
+ELSE.
+
+  WRITE: 'Operador invalido.'.
+
+ENDIF.

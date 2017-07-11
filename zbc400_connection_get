@@ -1,0 +1,31 @@
+FUNCTION zbc400_connection_get.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IV_CARRID) TYPE  BC400_S_CONNECTION-CARRID
+*"     REFERENCE(IV_CONNID) TYPE  BC400_S_CONNECTION-CONNID
+*"  EXPORTING
+*"     REFERENCE(ES_CONNECTION) TYPE  BC400_S_CONNECTION
+*"  EXCEPTIONS
+*"      NO_DATA
+*"----------------------------------------------------------------------
+
+  SELECT SINGLE
+        carrid
+        connid
+        cityfrom
+        airpfrom
+        cityto
+        airpto
+        fltime
+        deptime
+        arrtime
+    FROM spfli
+    INTO es_connection
+    WHERE carrid = iv_carrid AND connid = iv_connid.
+
+    IF sy-subrc <> 0.
+      RAISE no_data.
+    ENDIF.
+
+ENDFUNCTION.

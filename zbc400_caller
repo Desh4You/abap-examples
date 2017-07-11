@@ -1,0 +1,20 @@
+*&---------------------------------------------------------------------*
+*& Report  ZBC400_08_CALLER
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT  zbc400_caller.
+
+PARAMETERS: pa_name2  TYPE  char30,
+            pa_idade  TYPE i.
+
+EXPORT pa_idade
+TO MEMORY ID 'MEM'.
+
+SUBMIT zbc400_08_called WITH pa_name = pa_name2
+        VIA SELECTION-SCREEN AND RETURN.
+
+CALL TRANSACTION 'SE38'.

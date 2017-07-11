@@ -1,0 +1,24 @@
+*&---------------------------------------------------------------------*
+*& Report  ZBC400_CALLED
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT  zbc400_called.
+
+PARAMETERS:
+            pa_name TYPE char30.
+
+DATA:
+            v_idade TYPE i.
+
+IMPORT pa_idade TO  v_idade FROM MEMORY ID 'MEM'.
+
+SHIFT pa_name LEFT DELETING LEADING ''.
+SHIFT pa_name RIGHT DELETING TRAILING ''.
+
+WRITE: / 'Meu name é : ', pa_name, 'e minha idade é ', v_idade.
+
+SET PARAMETER ID 'RID' FIELD sy-repid.

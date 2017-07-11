@@ -1,0 +1,129 @@
+*&---------------------------------------------------------------------*
+*& Report   ZBC400_SUBROTINE
+*& autor:   Alex Vinicius Zamboli
+*& data:    2017-07-05
+*& email:   alex.zamboli@gmail.com
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT  zbc400_subrotine.
+
+PARAMETER:  pa_int1   TYPE i,
+            pa_int2   TYPE i,
+            pa_op     TYPE c LENGTH 1.
+TYPES:      int32     TYPE p LENGTH 3 DECIMALS 2,
+            gty_resut TYPE bc400_compute_result.
+
+CONSTANTS:  gc_pi     TYPE p DECIMALS 5 VALUE '3.1416'.
+
+DATA:       gv_result TYPE gty_resut.
+DATA:       gv_int32  TYPE int32,
+            gv_carrid TYPE s_carrid.
+
+IF ( pa_op = '+' OR
+  pa_op = '-' OR
+  pa_op = '*' OR
+  pa_op = '/' OR
+  pa_op = 'P' OR
+  pa_op = '%' AND pa_int2 <> 0 ).
+
+  CASE pa_op.
+    WHEN '+'.
+      gv_result = pa_int1 + pa_int2.
+    WHEN '-'.
+      gv_result = pa_int1 - pa_int2.
+    WHEN '*'.
+      gv_result = pa_int1 * pa_int2.
+    WHEN '/'.
+      gv_result = pa_int1 / pa_int2.
+    WHEN '%'.
+      CALL FUNCTION 'ZBC400_08_COMP_PERCENTAGE'
+        EXPORTING
+          iv_max           = pa_int1
+          iv_act           = pa_int2
+        IMPORTING
+          ev_percentage    = gv_result
+        EXCEPTIONS
+          division_by_zero = 1
+          OTHERS           = 2.
+
+      IF sy-subrc <> 0.
+        WRITE: 'Erro no FM'.
+      ENDIF.
+
+*******************      PERFORM cal_percentual
+*******************                  USING
+*******************                     pa_int1
+*******************                     pa_int2
+*******************                  CHANGING
+*******************                     gv_result.
+    WHEN 'P'.
+      CALL FUNCTION 'BC400_MOS_POWER'
+        EXPORTING
+          iv_base               = pa_int1
+          iv_power              = pa_int2
+        IMPORTING
+          ev_result             = gv_result
+        EXCEPTIONS
+          power_value_too_high  = 1
+          result_value_too_high = 2
+          OTHERS                = 3.
+
+      IF sy-subrc <> 0.
+        CASE sy-subrc.
+          WHEN 1.
+            WRITE: 'O valor max para pa_int2 4'.
+          WHEN 2.
+            WRITE: 'O resulta possui um valor aritmetico muito longo'.
+          WHEN 3.
+            WRITE: 'Erro desconhecido.'.
+          WHEN OTHERS.
+        ENDCASE.
+      ENDIF.
+
+    WHEN OTHERS.
+      WRITE: 'No idea how you enter here'.
+  ENDCASE.
+
+  "BREAK-POINT.
+
+  NEW-LINE: .
+  WRITE: 'User: ', sy-uname.
+  NEW-LINE: .
+  WRITE: ', Date: ', sy-datum.
+  NEW-LINE: .
+  WRITE: ',', text-001, gv_result.
+
+ELSEIF pa_op = '/' AND pa_int2 = 0.
+
+  WRITE: text-002.
+
+ELSE.
+
+  WRITE: 'Operador invalido.'.
+  NEW-LINE: .
+
+ENDIF.
+
+*-----------------------------------------------------------------*
+*-----------------------------------------------------------------*
+
+FORM cal_percentual USING pv_act TYPE i
+                          pv_max TYPE i
+                    CHANGING cv_result TYPE gty_resut.
+
+  IF pv_max = 0 .
+    cv_result = 0.
+    WRITE: text-004.
+    NEW-LINE: .
+  ELSE.
+    cv_result = pv_act / pv_max * 100.
+  ENDIF.
+
+ENDFORM.  "Sub for precentual calc
+
+
+*-----------------------------------------------------------------*
+*-----------------------------------------------------------------*

@@ -1,0 +1,16 @@
+*&---------------------------------------------------------------------*
+*& Include MZBC410_SOLUTIONTOP
+*& Module Pool      SAPMZBC410_SOLUTION
+*&---------------------------------------------------------------------*
+
+PROGRAM  sapmzbc410_solution.
+
+TABLES: sdyn_conn.
+
+DATA:   wa_sflight  TYPE    sflight,
+        io_01       TYPE    char1,
+        io_comm.
+
+DATA:   view        VALUE   'X',
+        mflights,
+        mbookings.

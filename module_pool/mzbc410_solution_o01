@@ -1,0 +1,40 @@
+*----------------------------------------------------------------------*
+***INCLUDE MZBC410_SOLUTION_O01  PBO
+*----------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  MOVE_TO_DYNP  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE move_to_dynp OUTPUT.
+
+  MOVE-CORRESPONDING: wa_sflight TO sdyn_conn.
+
+ENDMODULE.                 " MOVE_TO_DYNP  OUTPUT
+
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+
+  SET PF-STATUS 'STATUS-100'.
+  SET TITLEBAR 'TITLE-100' WITH sdyn_conn-carrid.
+
+ENDMODULE.                 " STATUS_0100  OUTPUT
+
+*&---------------------------------------------------------------------*
+*&      Module  MODIFY_SCREEN  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE modify_screen OUTPUT.
+
+  IF mflights = 'X'.
+    LOOP AT SCREEN.
+      IF screen-name =  'SDYN_CONN-PLANETYPE'.
+        screen-input = 1.
+      ENDIF.
+      MODIFY SCREEN.
+    ENDLOOP.
+  ENDIF.
+
+ENDMODULE.                 " MODIFY_SCREEN  OUTPUT

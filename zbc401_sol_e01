@@ -1,0 +1,98 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZBC401_SOL_E01
+*&---------------------------------------------------------------------*
+
+INITIALIZATION.
+  MOVE: 'AA' TO so_car-low,
+        'QF' TO so_car-high,
+        'BT' TO so_car-option,
+        'I'  TO so_car-sign.
+  APPEND so_car.
+  CLEAR  so_car.
+
+  MOVE: 'AZ' TO so_car-low,
+        'EQ' TO so_car-option,
+        'E'  TO so_car-sign.
+  APPEND so_car.
+
+  tab1 = text-002.
+  tab2 = text-003.
+  tab3 = text-004.
+
+  MOVE: sy-datum TO so_fdt-low,
+        sy-datum TO so_fdt-high,
+        'BT'     TO so_fdt-option,
+        'I'      TO so_fdt-sign.
+
+  APPEND so_fdt.
+
+START-OF-SELECTION.
+
+CASE 'X'.
+
+  WHEN pa_all.
+
+    SELECT * FROM  dv_flights
+      INTO gs_flight
+    WHERE carrid IN so_car
+          AND connid IN so_con
+          AND fldate IN so_fdt.
+
+        WRITE: / gs_flight-carrid,
+             gs_flight-connid,
+             gs_flight-fldate,
+             gs_flight-countryfr,
+             gs_flight-cityfrom,
+             gs_flight-airpfrom,
+             gs_flight-countryto,
+             gs_flight-cityto,
+             gs_flight-airpto,
+             gs_flight-seatsmax,
+             gs_flight-seatsocc.
+    ENDSELECT.
+
+  WHEN pa_int.
+
+    SELECT * FROM  dv_flights
+      INTO gs_flight
+    WHERE carrid IN so_car
+          AND connid IN so_con
+          AND fldate IN so_fdt
+          AND countryto <> dv_flights~countryfr.
+
+        WRITE: / gs_flight-carrid,
+             gs_flight-connid,
+             gs_flight-fldate,
+             gs_flight-countryfr,
+             gs_flight-cityfrom,
+             gs_flight-airpfrom,
+             gs_flight-countryto,
+             gs_flight-cityto,
+             gs_flight-airpto,
+             gs_flight-seatsmax,
+             gs_flight-seatsocc.
+    ENDSELECT.
+
+  WHEN pa_nat.
+
+    SELECT * FROM  dv_flights
+      INTO gs_flight
+    WHERE carrid IN so_car
+          AND connid IN so_con
+          AND fldate IN so_fdt
+          AND countryto EQ dv_flights~countryfr.
+
+        WRITE: / gs_flight-carrid,
+             gs_flight-connid,
+             gs_flight-fldate,
+             gs_flight-countryfr,
+             gs_flight-cityfrom,
+             gs_flight-airpfrom,
+             gs_flight-countryto,
+             gs_flight-cityto,
+             gs_flight-airpto,
+             gs_flight-seatsmax,
+             gs_flight-seatsocc.
+    ENDSELECT.
+
+ENDCASE.

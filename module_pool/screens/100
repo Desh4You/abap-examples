@@ -1,0 +1,10 @@
+PROCESS BEFORE OUTPUT.
+
+  MODULE move_to_dynp.
+  MODULE status_0100.
+  MODULE  modify_screen.
+
+PROCESS AFTER INPUT.
+
+  MODULE check_sflight.
+  MODULE user_command_0100.

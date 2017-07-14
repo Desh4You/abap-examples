@@ -1,0 +1,18 @@
+*&---------------------------------------------------------------------*
+*& Module Pool       SAPMZ08BC410_SOLUTION
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE MZ08BC410_SOLUTIONTOP                   .    " global Data
+
+* INCLUDE MZ08BC410_SOLUTIONO01                   .  " PBO-Modules
+* INCLUDE MZ08BC410_SOLUTIONI01                   .  " PAI-Modules
+* INCLUDE MZ08BC410_SOLUTIONF01                   .  " FORM-Routines
+
+
+INCLUDE MZ08BC410_SOLUTION_I01.
+
+INCLUDE MZ08BC410_SOLUTION_O01.

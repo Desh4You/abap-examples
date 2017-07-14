@@ -1,0 +1,54 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZBC401_SOL_TOP
+*&---------------------------------------------------------------------*
+
+DATA: gs_flight TYPE dv_flights.
+
+*&---------------------------------------------------------------------*
+*&                        Submenu declaration
+*&---------------------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*& Declaration
+*&---------------------------------------------------------------------*
+SELECTION-SCREEN BEGIN OF SCREEN 1100 AS SUBSCREEN.
+
+  SELECT-OPTIONS:    so_car    FOR     gs_flight-carrid    MEMORY ID car,
+                     so_con    FOR     gs_flight-connid.
+
+SELECTION-SCREEN END OF SCREEN 1100.
+
+*&---------------------------------------------------------------------*
+*& Flyies
+*&---------------------------------------------------------------------*
+SELECTION-SCREEN BEGIN OF SCREEN 1200 AS SUBSCREEN.
+
+  SELECT-OPTIONS:    so_fdt    FOR     gs_flight-fldate    NO-EXTENSION.
+
+SELECTION-SCREEN END OF SCREEN 1200.
+
+*&---------------------------------------------------------------------*
+*& Exit parameters
+*&---------------------------------------------------------------------*
+SELECTION-SCREEN BEGIN OF SCREEN 1300 AS SUBSCREEN.
+
+  SELECTION-SCREEN BEGIN OF BLOCK  radio WITH FRAME TITLE text-001.
+
+    PARAMETERS:     pa_all    RADIOBUTTON GROUP rbg1,
+                    pa_nat    RADIOBUTTON GROUP rbg1,
+                    pa_int    RADIOBUTTON GROUP rbg1 DEFAULT 'X'.
+
+  SELECTION-SCREEN END OF BLOCK   radio.
+
+SELECTION-SCREEN END OF SCREEN 1300.
+
+*&---------------------------------------------------------------------*
+*& Init for tab declaration
+*&---------------------------------------------------------------------*
+SELECTION-SCREEN BEGIN OF TABBED BLOCK airlines FOR 5 LINES.
+
+  SELECTION-SCREEN TAB (50) tab1 USER-COMMAND conn DEFAULT SCREEN 1100.
+  SELECTION-SCREEN TAB (50) tab2 USER-COMMAND date DEFAULT SCREEN 1200.
+  SELECTION-SCREEN TAB (50) tab3 USER-COMMAND type DEFAULT SCREEN 1300.
+
+SELECTION-SCREEN END OF BLOCK airlines.

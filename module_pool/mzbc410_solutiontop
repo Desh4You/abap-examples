@@ -5,12 +5,17 @@
 
 PROGRAM  sapmzbc410_solution.
 
-TABLES: sdyn_conn.
+TABLES:   sdyn_conn,
+          saplane.
 
-DATA:   wa_sflight  TYPE    sflight,
-        io_01       TYPE    char1,
-        io_comm.
+DATA:     wa_sflight  TYPE    sflight,
+          io_01       TYPE    char1,
+          io_comm.
 
-DATA:   view        VALUE   'X',
-        mflights,
-        mbookings.
+DATA:     view        VALUE   'X',
+          mflights,
+          mbookings.
+
+DATA:     dynn        TYPE    sy-dynnr.
+
+CONTROLS: my_tabstrip TYPE  TABSTRIP.

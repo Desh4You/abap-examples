@@ -38,3 +38,91 @@ MODULE modify_screen OUTPUT.
   ENDIF.
 
 ENDMODULE.                 " MODIFY_SCREEN  OUTPUT
+
+*&---------------------------------------------------------------------*
+*&      Module  EXIT  INPUT
+*&---------------------------------------------------------------------*
+
+MODULE exit INPUT.
+
+  CASE sy-ucomm.
+    WHEN 'CANCEL'.
+      CLEAR wa_sflight.
+      SET PARAMETER ID:
+        'CAR' FIELD wa_sflight-carrid,
+        'CON' FIELD wa_sflight-connid,
+        'DAY' FIELD wa_sflight-fldate.
+      LEAVE TO SCREEN 100.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN OTHERS.
+  ENDCASE.
+
+ENDMODULE.                 " EXIT  INPUT
+
+*&---------------------------------------------------------------------*
+*&      Module  FILL_DYNN  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE fill_dynn OUTPUT.
+
+  my_tabstrip-activetab = sy-ucomm.
+  CASE sy-ucomm.
+    WHEN 'FC1'.
+      dynn = 110.
+      view = 'X'.
+      mflights = ''.
+      mbookings = ''.
+    WHEN 'FC2'.
+      dynn = 120.
+      mflights = 'X'.
+      view = ''.
+      mbookings = ''.
+    WHEN 'FC3'.
+      dynn = 130.
+      mbookings = 'X'.
+      view = ''.
+      mflights = ''.
+  ENDCASE.
+
+  CASE 'X'.
+    WHEN view.
+      dynn = 110.
+      my_tabstrip-activetab = 'FC1'.
+    WHEN mflights.
+      dynn = 120.
+      my_tabstrip-activetab = 'FC2'.
+    WHEN mbookings.
+      dynn = 130.
+      my_tabstrip-activetab = 'FC3'.
+    WHEN OTHERS.
+      my_tabstrip-activetab = 'FC1'.
+  ENDCASE.
+
+ENDMODULE.                 " FILL_DYNN  OUTPUT
+
+*&---------------------------------------------------------------------*
+*&      Module  GET_SPFLI  OUTPUT - Screen 110
+*&---------------------------------------------------------------------*
+
+MODULE get_spfli OUTPUT.
+
+  SELECT SINGLE *
+    INTO CORRESPONDING FIELDS OF sdyn_conn
+    FROM spfli
+    WHERE carrid = wa_sflight-carrid AND
+          connid = wa_sflight-connid.
+
+ENDMODULE.                 " GET_SPFLI  OUTPUT
+
+*&---------------------------------------------------------------------*
+*&      Module  GET_SAPLANE  OUTPUT - Screen 120
+*&---------------------------------------------------------------------*
+
+MODULE get_saplane OUTPUT.
+
+  SELECT SINGLE *
+    FROM saplane
+    WHERE planetype = wa_sflight-planetype.
+
+ENDMODULE.                 " GET_SAPLANE  OUTPUT

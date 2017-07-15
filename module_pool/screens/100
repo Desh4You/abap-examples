@@ -1,10 +1,23 @@
+
 PROCESS BEFORE OUTPUT.
 
   MODULE move_to_dynp.
   MODULE status_0100.
-  MODULE  modify_screen.
+  MODULE modify_screen.
+  MODULE fill_dynn.
+
+  CALL SUBSCREEN sub INCLUDING sy-cprog dynn.
 
 PROCESS AFTER INPUT.
 
-  MODULE check_sflight.
+  MODULE exit AT EXIT-COMMAND.
+  CALL SUBSCREEN sub.
+
+  CHAIN.
+    FIELD:  sdyn_conn-carrid,
+            sdyn_conn-connid,
+            sdyn_conn-fldate.
+    MODULE check_sflight ON CHAIN-INPUT.
+  ENDCHAIN.
+
   MODULE user_command_0100.
